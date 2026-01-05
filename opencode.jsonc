@@ -1,0 +1,79 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "anthropic": {
+      "options": {
+        "apiKey": "dummy",
+        "baseURL": "https://localhost:4444/v1"
+      }
+    },
+    "openai": {
+      "options": {
+        "apiKey": "dummy",
+        "baseURL": "https://localhost:4444/v1"
+      }
+    },
+    "opencode": {
+      "options": {
+        "apiKey": "dummy"
+      }
+    }
+  },
+  "model": "anthropic/claude-opus-4-5-20251101",
+  "small_model": "opencode/GLM-4.7",  
+  "autoupdate": true,
+  "watcher": {
+    "ignore": [
+      "node_modules/**", "target/**", "vendor/**", 
+      "bin/**",  "dist/**", ".git/**"]
+  },
+ 
+  
+  // === Agent Overrides ===
+  "agent": {
+    // Build agent - full capability with slight creativity
+    "build": {
+      "temperature": 0.3
+    },
+    // Plan agent - read-only analysis, no file writes
+    "plan": {
+      "temperature": 0.1,
+      "permission": {
+        "bash": {
+          "git status": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git show*": "allow",
+          "bd *": "allow",
+          "rg *": "allow",
+          "tree *": "allow",
+          "wc *": "allow",
+          "head *": "allow",
+          "tail *": "allow",
+          "*": "deny"
+        }
+      }
+    },
+    // Security agent - read-only vulnerability scanning with Snyk
+    "security": {
+      "description": "Security auditor - scans for vulnerabilities using Snyk tools (SCA, SAST, IaC, container). Read-only, reports findings without modification."
+    },
+    // Test writer agent - generates comprehensive test suites
+    "testsuite": {
+      "temperature": 0.2,  
+      "description": "Test specialist - generates comprehensive unit, integration, and e2e tests. Can only write to test files."
+    },
+    // Docs agent - documentation writer (cheaper model)
+    "docs": {
+      "temperature": 0.3,  
+      "permission": {
+        "write": {
+          "**/*.md": "allow",
+          "**/*.mdx": "allow",
+          "*": "deny"
+        }
+      },
+      "description": "Documentation writer - generates and updates markdown docs, READMEs, and guides. Can only write to .md/.mdx files."
+    }
+  }
+}
